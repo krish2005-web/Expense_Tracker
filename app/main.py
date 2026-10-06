@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
 from app.config import settings
+from fastapi.staticfiles import StaticFiles
 
 
 app=FastAPI()
@@ -89,8 +90,8 @@ app.add_middleware(
 def me(current_user = Depends(get_current_user)):
     return current_user
 
-@app.get("/")
-def home():
-    return {
-        "message": "Expense Tracker API is running"
-    }
+app.mount(
+    "/",
+    StaticFiles(directory="frontend", html=True),
+    name="frontend"
+)
