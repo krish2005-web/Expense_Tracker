@@ -92,6 +92,6 @@ def me(current_user = Depends(get_current_user)):
 
 app.mount(
     "/",
-    StaticFiles(directory="frontend", html=True),
+    StaticFiles(directory="Frontend", html=True),
     name="frontend"
 )
