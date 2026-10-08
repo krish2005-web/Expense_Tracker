@@ -273,7 +273,7 @@ Start command:
 uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
-The repository also includes `render.yaml`.
+The repository also includes `render.yaml`. For the free demo deployment, SQLite tables are initialized at application startup.
 
 **Important:** Render Free web services do not provide persistent local filesystem storage,
 so the SQLite database and uploaded receipt files are suitable for a demo but not for durable

@@ -1,4 +1,10 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_SQLITE_URL = f"sqlite:///{(BASE_DIR / 'expense_tracker.db').as_posix()}"
 
 
 class Settings(BaseSettings):
@@ -8,10 +14,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # Local development can continue using PostgreSQL through .env.
-    # If DATABASE_URL is not supplied (for example on a simple Render demo),
-    # the app falls back to a local SQLite file.
-    DATABASE_URL: str = "sqlite:///./expense_tracker.db"
+    DATABASE_URL: str = DEFAULT_SQLITE_URL
     SECRET_KEY: str = "dev-only-change-this-in-production"
     ALGORITHM: str = "HS256"
     FRONTEND_URL: str = "http://localhost:5500"

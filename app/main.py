@@ -4,16 +4,25 @@ from app.routers.auth import router as auth_router
 from app.routers.expenses import router as expense_router
 from app.dependencies import get_current_user
 import time
+from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.exceptions import ExpenseNotFoundException
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
 from app.config import settings
-from fastapi.staticfiles import StaticFiles
+from app.database import Base, engine
 
 
 app=FastAPI()
+
+
+@app.on_event("startup")
+async def initialize_database():
+    if settings.DATABASE_URL.startswith("sqlite"):
+        Base.metadata.create_all(bind=engine)
+        print("SQLite tables ready at startup")
 
 @app.exception_handler(ExpenseNotFoundException)
 async def expense_not_found_handler(
@@ -90,8 +99,16 @@ app.add_middleware(
 def me(current_user = Depends(get_current_user)):
     return current_user
 
+@app.get("/")
+def home():
+    return {
+        "message": "Expense Tracker API is running"
+    }
+
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "Frontend"
 app.mount(
     "/",
-    StaticFiles(directory="Frontend", html=True),
-    name="frontend"
+    StaticFiles(directory=FRONTEND_DIR, html=True),
+    name="frontend",
 )
+
